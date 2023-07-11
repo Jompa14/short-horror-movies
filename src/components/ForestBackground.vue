@@ -16,12 +16,12 @@ export default {
     document.getElementById('forest-container').appendChild(renderer.domElement);
 
     // Create a blue moonlight
-    const moonLight = new THREE.PointLight(0x6336e3, 1, 1000);
-    moonLight.position.set(2, 2, 7);
+    const moonLight = new THREE.PointLight(0x6336e3, 1, 50);
+    moonLight.position.set(2, 3, 7);
     scene.add(moonLight);
-    const sphereSize = 1;
-    const pointLightHelper = new THREE.PointLightHelper(moonLight, sphereSize);
-    scene.add(pointLightHelper);
+    // const sphereSize = 1;
+    // const pointLightHelper = new THREE.PointLightHelper(moonLight, sphereSize);
+    // scene.add(pointLightHelper);
 
     // Create custom tree geometry
     const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.4, 5, 8);
@@ -34,44 +34,49 @@ export default {
 
     const trunkMaterial = new THREE.MeshLambertMaterial({ map: trunkTexture });
     const foliageMaterial = new THREE.MeshLambertMaterial({ color: 0x478c74, map: foliageTexture });
-
     foliageMaterial.map.repeat.set(2, 1.5);
 
-    // Create tree
-    const tree = new THREE.Object3D();
+    // Create ground plane
+    const groundSize = 200;
+    const groundGeometry = new THREE.PlaneGeometry(groundSize, groundSize);
+    const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x89a167 });
+    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+    groundMesh.receiveShadow = true;
+    groundMesh.rotation.x = -Math.PI / 2;
+    scene.add(groundMesh);
 
-    // Create trunk
-    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-    trunk.position.y = 2.5;
-    tree.add(trunk);
+    // Randomly position trees on the ground
+    const numTrees = 300;
+    const treePlacementRange = groundSize / 2;
+    for (let i = 0; i < numTrees; i++) {
+      const tree = new THREE.Object3D();
 
-    // Create foliage
-    const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
-    foliage.position.y = 6.5;
-    tree.add(foliage);
+      // Create trunk
+      const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+      trunk.position.y = 1;
+      tree.add(trunk);
 
-    scene.add(tree);
+      // Create foliage
+      const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+      foliage.position.y = 6.5;
+      tree.add(foliage);
+
+      // Randomly position the tree on the ground
+      const posX = Math.random() * treePlacementRange * 2 - treePlacementRange;
+      const posZ = Math.random() * treePlacementRange * 2 - treePlacementRange;
+      tree.position.set(posX, 0, posZ);
+
+      scene.add(tree);
+    }
 
     // Set up camera position
-    camera.position.set(0, 2, 10); // Position the camera to look at the tree from the front
+    camera.position.set(0, 10, 20); // Position the camera to have an overview of the scene
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     // Add camera controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-
-    // Load ground texture for the floor
-    const groundTexture = textureLoader.load(require('../textures/ground.jpg'));
-    groundTexture.wrapS = THREE.RepeatWrapping;
-    groundTexture.wrapT = THREE.RepeatWrapping;
-    groundTexture.repeat.set(20, 20);
-
-    const floorGeometry = new THREE.PlaneGeometry(200, 200);
-    const floorMaterial = new THREE.MeshLambertMaterial({ map: groundTexture });
-    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-    floorMesh.receiveShadow = true;
-    floorMesh.rotation.x = -Math.PI / 2;
-    scene.add(floorMesh);
 
     // Start the animation loop
     function animate() {
