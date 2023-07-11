@@ -23,15 +23,19 @@ export default {
     const pointLightHelper = new THREE.PointLightHelper(moonLight, sphereSize);
     scene.add(pointLightHelper);
 
-    // // Grid Helper
-    // const gridHelper = new THREE.GridHelper(200, 50);
-    // scene.add(gridHelper);
-
     // Create custom tree geometry
     const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.4, 5, 8);
     const foliageGeometry = new THREE.SphereGeometry(3, 8, 6);
-    const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x543d2d });
-    const foliageMaterial = new THREE.MeshLambertMaterial({ color: 0x008000 });
+
+    // Load textures for trunk and foliage
+    const textureLoader = new THREE.TextureLoader();
+    const trunkTexture = textureLoader.load(require('../textures/trunk.jpg'));
+    const foliageTexture = textureLoader.load(require('../textures/leaves.jpg'));
+
+    const trunkMaterial = new THREE.MeshLambertMaterial({ map: trunkTexture });
+    const foliageMaterial = new THREE.MeshLambertMaterial({ color: 0x478c74, map: foliageTexture });
+
+    foliageMaterial.map.repeat.set(2, 1.5);
 
     // Create tree
     const tree = new THREE.Object3D();
@@ -56,8 +60,7 @@ export default {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
-    // Load wood texture for the floor
-    const textureLoader = new THREE.TextureLoader();
+    // Load ground texture for the floor
     const groundTexture = textureLoader.load(require('../textures/ground.jpg'));
     groundTexture.wrapS = THREE.RepeatWrapping;
     groundTexture.wrapT = THREE.RepeatWrapping;
