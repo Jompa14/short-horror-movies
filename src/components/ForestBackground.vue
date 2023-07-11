@@ -14,20 +14,18 @@ export default {
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('forest-container').appendChild(renderer.domElement);
-    
 
     // Create a blue moonlight
-
-    const moonLight = new THREE.PointLight( 0x6336e3, 1, 1000 );
-    moonLight.position.set( 2, 2, 7 );
-    scene.add( moonLight );
+    const moonLight = new THREE.PointLight(0x6336e3, 1, 1000);
+    moonLight.position.set(2, 2, 7);
+    scene.add(moonLight);
     const sphereSize = 1;
-    const pointLightHelper = new THREE.PointLightHelper( moonLight, sphereSize );
-    scene.add( pointLightHelper );
+    const pointLightHelper = new THREE.PointLightHelper(moonLight, sphereSize);
+    scene.add(pointLightHelper);
 
-    // Grid Helper
-    const gridHelper = new THREE.GridHelper(200, 50);
-    scene.add(gridHelper);
+    // // Grid Helper
+    // const gridHelper = new THREE.GridHelper(200, 50);
+    // scene.add(gridHelper);
 
     // Create custom tree geometry
     const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.4, 5, 8);
@@ -52,12 +50,25 @@ export default {
 
     // Set up camera position
     camera.position.set(0, 2, 10); // Position the camera to look at the tree from the front
-    // camera.lookAt(tree.position);
 
     // Add camera controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
+
+    // Load wood texture for the floor
+    const textureLoader = new THREE.TextureLoader();
+    const groundTexture = textureLoader.load(require('../textures/ground.jpg'));
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(20, 20);
+
+    const floorGeometry = new THREE.PlaneGeometry(200, 200);
+    const floorMaterial = new THREE.MeshLambertMaterial({ map: groundTexture });
+    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+    floorMesh.receiveShadow = true;
+    floorMesh.rotation.x = -Math.PI / 2;
+    scene.add(floorMesh);
 
     // Start the animation loop
     function animate() {
