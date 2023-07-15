@@ -1,6 +1,5 @@
 <template>
-<div id="forest-container" ref="forestContainer">
-</div>
+<div id="forest-container" ref="forestContainer"></div>
 </template>
 
 <script setup>
@@ -31,7 +30,7 @@ onMounted(() => {
     const textureLoader = new THREE.TextureLoader();
 
     // Load ground texture for the floor
-    const groundTexture = textureLoader.load(require('../textures/ground.jpg'));
+    const groundTexture = textureLoader.load(require('../assets/textures/ground.jpg'));
     groundTexture.wrapS = THREE.RepeatWrapping;
     groundTexture.wrapT = THREE.RepeatWrapping;
     groundTexture.repeat.set(20, 20);
