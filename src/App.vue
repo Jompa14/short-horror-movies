@@ -1,14 +1,14 @@
 <template>
-    <ForestBackground />
+    <TvRoom />
 </template>
 
 <script>
-import ForestBackground from './components/ForestBackground.vue'
+import TvRoom from './components/TvRoom.vue'
 
 export default {
   name: 'App',
   components: {
-    ForestBackground
+    TvRoom
   }
 }
 </script>
